@@ -4,7 +4,7 @@
   <script>
     import invariant from "tiny-invariant";
 
-    const COUNT = 4;
+    const COUNT = 15;
     const SPEED = 0.1;
 
     class Parcel {
@@ -13,15 +13,68 @@
       z: number;
       xPrev: number;
       yPrev: number;
-      image: HTMLImageElement;
+      image0: HTMLImageElement;
+      image1: HTMLImageElement;
+      image2: HTMLImageElement;
+      image3: HTMLImageElement;
+      currImage: HTMLImageElement | null;
 
-      constructor(x = 0, y = 0, z = 0, image: HTMLImageElement) {
+      constructor(
+        x = 0,
+        y = 0,
+        z = 0,
+        image0: HTMLImageElement,
+        image1: HTMLImageElement,
+        image2: HTMLImageElement,
+        image3: HTMLImageElement
+      ) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.xPrev = x;
         this.yPrev = y;
-        this.image = image;
+        this.image0 = image0;
+        this.image1 = image1;
+        this.image2 = image2;
+        this.image3 = image3;
+        this.currImage = null;
+      }
+
+      setCurrImage(canvasWidth: number, canvasHeight: number) {
+        if (
+          // somewhere in the innermost area of canvas
+          (-canvasWidth / 8 > this.x || this.x < canvasWidth / 8) &&
+          (-canvasHeight / 8 > this.y || this.y < canvasHeight / 8)
+        ) {
+          this.currImage = this.image0;
+          // console.log(
+          //   `set current image to image0 with w: ${this.x} of ${canvasWidth / 2} and h: ${this.y} of ${canvasHeight / 2}`
+          // );
+        } else if (
+          // somewhere in the second ring of canvas
+          ((-canvasWidth * 2) / 8 > this.x || this.x < (canvasWidth * 2) / 8) &&
+          ((-canvasHeight * 2) / 8 > this.y || this.y < (canvasHeight * 2) / 8)
+        ) {
+          this.currImage = this.image1;
+          // console.log(
+          //   `set current image to image1 with w: ${this.x} of ${canvasWidth / 2} and h: ${this.y} of ${canvasHeight / 2}`
+          // );
+        } else if (
+          // somewhere in the third ring of canvas
+          ((-canvasWidth * 3) / 8 > this.x || this.x < (canvasWidth * 3) / 8) &&
+          ((-canvasHeight * 3) / 8 > this.y || this.y < (canvasHeight * 3) / 8)
+        ) {
+          this.currImage = this.image2;
+          // console.log(
+          //   `set current image to image2 with w: ${this.x} of ${canvasWidth / 2} and h: ${this.y} of ${canvasHeight / 2}`
+          // );
+        } else {
+          // somewhere in the outer ring of canvas
+          this.currImage = this.image3;
+          // console.log(
+          //   `set current image to image3 with w: ${this.x} of ${canvasWidth / 2} and h: ${this.y} of ${canvasHeight / 2}`
+          // );
+        }
       }
 
       update(canvasWidth: number, canvasHeight: number, speed: number) {
@@ -46,13 +99,13 @@
 
       draw(ctx: CanvasRenderingContext2D) {
         // const size = this.z * 0.5 + 0.5; // Adjust size based on z-position
-        const size = this.image.width;
+        const size = this.currImage!.width;
         ctx.globalAlpha = this.z * 0.5 + 0.5; // Adjust opacity based on z-position
-        console.log(
-          `draw(${this.x - size / 2}, ${this.y - size / 2}, ${size}, ${size})`
-        );
+        // console.log(
+        //   `draw(${this.currImage!.src} ${this.x - size / 2}, ${this.y - size / 2}, ${size}, ${size})`
+        // );
         ctx.drawImage(
-          this.image,
+          this.currImage!,
           this.x - size / 2,
           this.y - size / 2,
           size,
@@ -81,7 +134,10 @@
           0,
           0,
           0,
-          parcelImages[Math.floor(Math.random() * parcelImages.length)]
+          parcelImages[0],
+          parcelImages[1],
+          parcelImages[2],
+          parcelImages[3]
         )
     );
     let rafId = 0;
@@ -98,7 +154,6 @@
     resizeObserver.observe(container);
 
     function setup() {
-      console.log("setup");
       invariant(ctx, "canvas context should not be null");
       rafId > 0 && cancelAnimationFrame(rafId);
 
@@ -114,7 +169,7 @@
         parcel.x = Math.random() * width - width / 2;
         parcel.y = Math.random() * height - height / 2;
         parcel.z = 0;
-        // console.log(parcel);
+        parcel.setCurrImage(width, height);
       }
 
       ctx.translate(width / 2, height / 2);
@@ -131,7 +186,7 @@
       for (const parcel of parcels) {
         parcel.update(width, height, SPEED);
         parcel.draw(ctx);
-        // console.log(parcel);
+        parcel.setCurrImage(width, height);
       }
 
       ctx.fillRect(-width / 2, -height / 2, width, height);
