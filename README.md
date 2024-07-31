@@ -64,6 +64,70 @@ magick red-green-excel-sheet.png \
   red-green-excel-sheet-rotated-magick.png
 ```
 
+#### Create Pixel Art
+
+##### DallE2 Prompt
+
+A small brown parcel with shipping labels on it, open copy space, centered, transparent background, pixel art, illustration.
+
+##### Post Processing
+
+###### Remove Background
+
+In Photoshop with the Properties (above layers) -> remove background.
+
+Save as DallE2Parcel.psd
+Export as DallE2Parcel.png
+
+###### Create Different Size Images for the Animation
+
+```bash
+cd external_assets/Parcels/Pixel Art/ParcelPixelArt2
+../create_different_sizes.sh 02_ParcelPixelArt2.png
+mv 02_ParcelPixelArt2.png 02_ParcelPixelArt2_4.png
+```
+
+#### Create the Low Poly Parcels
+
+##### DallE2 Prompt
+
+A brown parcel with labels on it, transparent background.
+
+
+##### Post Processing
+
+###### Remove Background
+
+In Photoshop with the Properties (above layers) -> remove background.
+
+Save as DallE2Parcel.psd
+Export as DallE2Parcel.png
+
+###### Reduce Colors
+
+Step 1: Reduce colors to 16 and convert to PNG
+
+```bash
+magick DallE2Parcel.png \
+  -colorspace RGB \
+  +dither \
+  -colors 32 \
+  -depth 8 \
+  DallE2Parcel-reduced-colors.png
+```
+
+###### Convert to SVG
+
+Step 2: Convert the reduced color PNG to PNM format
+
+`magick reduced_colors.png reduced_colors.pnm`
+
+Step 3: Use potrace to convert PNM to SVG
+
+`potrace reduced_colors.pnm -s -o output.svg`
+
+install it with `brew install potrace`
+
 ## Hosting
 
 Subdomain: apps.saasquadrat.com/pick-n-pack-n-shipping-calc
