@@ -5,13 +5,15 @@ import AnimatedCurrencies from "./AnimatedCurrencies.tsx";
 import excelSheetImage from "~/assets/red-green-excel-sheet-rotated.png";
 import HeroImage from "~/components/hero-image.astro";
 import Starfield from "~/components/starfield.astro";
+import Parcelfield from "./parcelfield.astro";
 
 const widths = [450, 800];
 const sizes = "(min-width: 640px) 42vw, 67vw";
 ---
 
 <section class="relative h-full bg-black">
-  <Starfield />
+  <!-- <Starfield /> -->
+  <Parcelfield />
   <div id="splash-bg-fallback" class="absolute inset-0 hidden opacity-40">
     <HeroImage />
   </div>
@@ -34,7 +36,7 @@ const sizes = "(min-width: 640px) 42vw, 67vw";
         class="gradient-text text-center font-extrabold tracking-tighter text-6xl md:text-8xl"
       >
         Is my Shopify
-        <br />shop,
+        <br />shop
         <br />profitable today?
       </div>
     </h2>
@@ -48,7 +50,7 @@ const sizes = "(min-width: 640px) 42vw, 67vw";
         widths={widths}
         sizes={sizes}
         loading="eager"
-        alt="A floating astronaut in a space suit"
+        alt="A floating excelsheet with daily shopify profit & loss numbers"
       />
     </div>
   </div>

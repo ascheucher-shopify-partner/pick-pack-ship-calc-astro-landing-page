@@ -90,7 +90,10 @@ Export as DallE2Parcel.png
 ```bash
 cd external_assets/Parcels/Pixel Art/ParcelPixelArt2
 ../create_different_sizes.sh 02_ParcelPixelArt2.png
-mv 02_ParcelPixelArt2.png 02_ParcelPixelArt2_4.png
+mv 02_ParcelPixelArt2.png 02_ParcelPixelArt2_3.png
+
+cd ../../../.. # project root dir
+mv external_assets/Parcels/Pixel\ Art/ParcelPixelArt2/02_ParcelPixelArt2_* src/assets/parcelfield
 ```
 
 #### Create the Low Poly Parcels
