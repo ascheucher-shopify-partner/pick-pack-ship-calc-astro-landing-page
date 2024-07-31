@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface AnimatedCurrenciesProps {
   size: number;
@@ -6,7 +6,6 @@ interface AnimatedCurrenciesProps {
   showDuration: number;
   fontFamily?: string;
   kerning?: number;
-  maxOffset?: number;
 }
 
 const AnimatedCurrencies: React.FC<AnimatedCurrenciesProps> = ({
@@ -14,29 +13,18 @@ const AnimatedCurrencies: React.FC<AnimatedCurrenciesProps> = ({
   morphDuration,
   showDuration,
   fontFamily = "'Rubik Dirt', cursive",
-  kerning = 10,
-  maxOffset = 20
+  kerning = 10 // Default kerning value
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isAnimating, setIsAnimating] = useState(false);
   const totalSteps = 5;
-
-  const symbolRef = useRef<SVGTextElement>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentStep((prevStep) => (prevStep + 1) % totalSteps);
-      setPosition({
-        x: Math.random() * maxOffset * 2 - maxOffset,
-        y: Math.random() * maxOffset * 2 - maxOffset
-      });
-      setIsAnimating(true);
-      setTimeout(() => setIsAnimating(false), morphDuration);
     }, showDuration + morphDuration);
 
     return () => clearInterval(interval);
-  }, [showDuration, morphDuration, maxOffset]);
+  }, [showDuration, morphDuration]);
 
   const symbols = [
     { symbol: '$', color: 'green', prefix: '+' },
@@ -50,64 +38,47 @@ const AnimatedCurrencies: React.FC<AnimatedCurrenciesProps> = ({
 
   return (
     <svg width={size} height={size} viewBox="0 0 100 100">
-      <g transform={`translate(${50 + position.x}, ${50 + position.y})`}>
-        {currentStep < 4 ? (
-          <>
-            <text
-              ref={symbolRef}
-              x={kerning}
-              y="0"
-              fontSize="60"
-              fill={currentSymbol.color}
-              fontFamily={fontFamily}
-              textAnchor="middle"
-              alignmentBaseline="central"
-              style={{
-                transition: `all ${morphDuration}ms`,
-                transform: isAnimating ? 'scale(1)' : 'scale(0.33)',
-                opacity: isAnimating ? 1 : 0
-              }}
-            >
-              {currentSymbol.symbol}
-            </text>
-            <text
-              x={-kerning}
-              y="0"
-              fontSize="60"
-              fill={currentSymbol.color}
-              fontFamily={fontFamily}
-              textAnchor="middle"
-              alignmentBaseline="central"
-              style={{
-                transition: `all ${morphDuration}ms`,
-                transform: isAnimating ? 'scale(1)' : 'scale(0.33)',
-                opacity: isAnimating ? 1 : 0
-              }}
-            >
-              {currentSymbol.prefix}
-            </text>
-          </>
-        ) : (
+      {currentStep < 4 && (
+        <>
           <text
-            ref={symbolRef}
-            x="0"
-            y="0"
+            x={30 + kerning}
+            y="65"
             fontSize="60"
             fill={currentSymbol.color}
             fontFamily={fontFamily}
-            textAnchor="middle"
-            alignmentBaseline="central"
-            style={{
-              transition: `all ${morphDuration}ms`,
-              transform: isAnimating ? 'scale(1)' : 'scale(0.33)',
-              opacity: isAnimating ? 1 : 0,
-              animation: `pulse ${showDuration}ms infinite alternate`
-            }}
+            style={{ transition: `all ${morphDuration}ms` }}
           >
             {currentSymbol.symbol}
           </text>
-        )}
-      </g>
+          <text
+            x="10"
+            y="65"
+            fontSize="60"
+            fill={currentSymbol.color}
+            fontFamily={fontFamily}
+            style={{ transition: `all ${morphDuration}ms` }}
+          >
+            {currentSymbol.prefix}
+          </text>
+        </>
+      )}
+
+      {currentStep === 4 && (
+        <text
+          x="50"
+          y="65"
+          fontSize="60"
+          fill={currentSymbol.color}
+          fontFamily={fontFamily}
+          textAnchor="middle"
+          style={{
+            transition: `all ${morphDuration}ms`,
+            animation: `pulse ${showDuration * 2}ms infinite alternate`
+          }}
+        >
+          {currentSymbol.symbol}
+        </text>
+      )}
 
       <style>
         {`
