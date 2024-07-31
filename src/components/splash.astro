@@ -1,7 +1,7 @@
 ---
 import { Image } from "astro:assets";
-import { Icon } from "astro-icon/components";
-import AnimatedCurrencies from "~/components/AnimatedCurrencies";
+import AnimatedCurrencies from "./AnimatedCurrencies.tsx";
+
 import astronautImage from "~/assets/astronaut.png";
 import HeroImage from "~/components/hero-image.astro";
 import Starfield from "~/components/starfield.astro";
@@ -24,17 +24,18 @@ const sizes = "(min-width: 640px) 42vw, 67vw";
         name="logomark"
         class="size-20 text-white md:size-32"
         size={200}
-        morphDuration={500}
-        showDuration={2000}
+        morphDuration={1000}
+        showDuration={1000}
         kerning={15}
+        maxRandomStepOffset={30}
         fontFamily="'Rubik Dirt', sans-serif"
       />
       <div
         class="gradient-text text-center font-extrabold tracking-tighter text-6xl md:text-8xl"
       >
-        Is my shop
-        <br /> profitable,
-        <br /> today???
+        Is my Shopify
+        <br />shop,
+        <br />profitable today?
       </div>
     </h2>
     <div

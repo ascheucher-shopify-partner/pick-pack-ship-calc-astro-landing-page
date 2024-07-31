@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface AnimatedCurrenciesProps {
   size: number;
@@ -6,6 +6,7 @@ interface AnimatedCurrenciesProps {
   showDuration: number;
   fontFamily?: string;
   kerning?: number;
+  maxRandomStepOffset?: number;
 }
 
 const AnimatedCurrencies: React.FC<AnimatedCurrenciesProps> = ({
@@ -13,18 +14,34 @@ const AnimatedCurrencies: React.FC<AnimatedCurrenciesProps> = ({
   morphDuration,
   showDuration,
   fontFamily = "'Rubik Dirt', cursive",
-  kerning = 10 // Default kerning value
+  kerning = 10,
+  maxRandomStepOffset = 20
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isAnimating, setIsAnimating] = useState(false);
   const totalSteps = 5;
+
+  const symbolRef = useRef<SVGTextElement>(null);
+
+  const getRandomPosition = () => {
+    const maxSafeOffset = maxRandomStepOffset * 0.6;
+    return {
+      x: Math.random() * maxSafeOffset * 2 - maxSafeOffset,
+      y: Math.random() * maxSafeOffset * 2 - maxSafeOffset
+    };
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentStep((prevStep) => (prevStep + 1) % totalSteps);
+      setPosition(getRandomPosition());  // Move this line inside the interval
+      setIsAnimating(true);
+      setTimeout(() => setIsAnimating(false), morphDuration);
     }, showDuration + morphDuration);
 
     return () => clearInterval(interval);
-  }, [showDuration, morphDuration]);
+  }, [showDuration, morphDuration, maxRandomStepOffset]);
 
   const symbols = [
     { symbol: '$', color: 'green', prefix: '+' },
@@ -36,49 +53,66 @@ const AnimatedCurrencies: React.FC<AnimatedCurrenciesProps> = ({
 
   const currentSymbol = symbols[currentStep];
 
+  const getAnimationStyle = () => ({
+    transition: `all ${morphDuration}ms cubic-bezier(0.34, 1.56, 0.64, 1)`,
+    transform: isAnimating ? 'scale(1)' : 'scale(0.33)',
+    opacity: isAnimating ? 1 : 0
+  });
+
+  const getQuestionMarkStyle = () => ({
+    ...getAnimationStyle(),
+    animation: isAnimating
+      ? `pulse ${showDuration}ms ${morphDuration}ms infinite alternate`
+      : 'none'
+  });
+
   return (
-    <svg width={size} height={size} viewBox="0 0 100 100">
-      {currentStep < 4 && (
-        <>
+    <svg width={size} height={size} viewBox="-50 -50 100 100">
+      <g transform={`translate(${position.x}, ${position.y})`}>
+        {currentStep < 4 ? (
+          <>
+            <text
+              ref={symbolRef}
+              x={kerning}
+              y="0"
+              fontSize="40"
+              fill={currentSymbol.color}
+              fontFamily={fontFamily}
+              textAnchor="middle"
+              alignmentBaseline="central"
+              style={getAnimationStyle()}
+            >
+              {currentSymbol.symbol}
+            </text>
+            <text
+              x={-kerning}
+              y="0"
+              fontSize="40"
+              fill={currentSymbol.color}
+              fontFamily={fontFamily}
+              textAnchor="middle"
+              alignmentBaseline="central"
+              style={getAnimationStyle()}
+            >
+              {currentSymbol.prefix}
+            </text>
+          </>
+        ) : (
           <text
-            x={30 + kerning}
-            y="65"
-            fontSize="60"
+            ref={symbolRef}
+            x="0"
+            y="0"
+            fontSize="40"
             fill={currentSymbol.color}
             fontFamily={fontFamily}
-            style={{ transition: `all ${morphDuration}ms` }}
+            textAnchor="middle"
+            alignmentBaseline="central"
+            style={getQuestionMarkStyle()}
           >
             {currentSymbol.symbol}
           </text>
-          <text
-            x="10"
-            y="65"
-            fontSize="60"
-            fill={currentSymbol.color}
-            fontFamily={fontFamily}
-            style={{ transition: `all ${morphDuration}ms` }}
-          >
-            {currentSymbol.prefix}
-          </text>
-        </>
-      )}
-
-      {currentStep === 4 && (
-        <text
-          x="50"
-          y="65"
-          fontSize="60"
-          fill={currentSymbol.color}
-          fontFamily={fontFamily}
-          textAnchor="middle"
-          style={{
-            transition: `all ${morphDuration}ms`,
-            animation: `pulse ${showDuration * 2}ms infinite alternate`
-          }}
-        >
-          {currentSymbol.symbol}
-        </text>
-      )}
+        )}
+      </g>
 
       <style>
         {`
