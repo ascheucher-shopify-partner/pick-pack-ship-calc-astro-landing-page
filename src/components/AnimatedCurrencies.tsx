@@ -1,22 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-interface AnimatedCurrencyProps {
+interface AnimatedCurrenciesProps {
   size: number;
   morphDuration: number;
   showDuration: number;
+  fontFamily?: string;
+  kerning?: number;
+  maxOffset?: number;
 }
 
-const AnimatedCurrencies: React.FC<AnimatedCurrencyProps> = ({ size, morphDuration, showDuration }) => {
+const AnimatedCurrencies: React.FC<AnimatedCurrenciesProps> = ({
+  size,
+  morphDuration,
+  showDuration,
+  fontFamily = "'Rubik Dirt', cursive",
+  kerning = 10,
+  maxOffset = 20
+}) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isAnimating, setIsAnimating] = useState(false);
   const totalSteps = 5;
+
+  const symbolRef = useRef<SVGTextElement>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentStep((prevStep) => (prevStep + 1) % totalSteps);
+      setPosition({
+        x: Math.random() * maxOffset * 2 - maxOffset,
+        y: Math.random() * maxOffset * 2 - maxOffset
+      });
+      setIsAnimating(true);
+      setTimeout(() => setIsAnimating(false), morphDuration);
     }, showDuration + morphDuration);
 
     return () => clearInterval(interval);
-  }, [showDuration, morphDuration]);
+  }, [showDuration, morphDuration, maxOffset]);
 
   const symbols = [
     { symbol: '$', color: 'green', prefix: '+' },
@@ -30,47 +50,64 @@ const AnimatedCurrencies: React.FC<AnimatedCurrencyProps> = ({ size, morphDurati
 
   return (
     <svg width={size} height={size} viewBox="0 0 100 100">
-      <defs>
-        <path id="dollarPath" d="M50 20V80M40 30H60M40 70H60" />
-        <path id="euroPath" d="M60 30H40Q30 30 30 50T40 70H60M40 50H55" />
-        <path id="questionPath" d="M40 30Q50 20 60 30T50 55V70M50 80V85" />
-      </defs>
-
-      {currentStep < 4 && (
-        <>
+      <g transform={`translate(${50 + position.x}, ${50 + position.y})`}>
+        {currentStep < 4 ? (
+          <>
+            <text
+              ref={symbolRef}
+              x={kerning}
+              y="0"
+              fontSize="60"
+              fill={currentSymbol.color}
+              fontFamily={fontFamily}
+              textAnchor="middle"
+              alignmentBaseline="central"
+              style={{
+                transition: `all ${morphDuration}ms`,
+                transform: isAnimating ? 'scale(1)' : 'scale(0.33)',
+                opacity: isAnimating ? 1 : 0
+              }}
+            >
+              {currentSymbol.symbol}
+            </text>
+            <text
+              x={-kerning}
+              y="0"
+              fontSize="60"
+              fill={currentSymbol.color}
+              fontFamily={fontFamily}
+              textAnchor="middle"
+              alignmentBaseline="central"
+              style={{
+                transition: `all ${morphDuration}ms`,
+                transform: isAnimating ? 'scale(1)' : 'scale(0.33)',
+                opacity: isAnimating ? 1 : 0
+              }}
+            >
+              {currentSymbol.prefix}
+            </text>
+          </>
+        ) : (
           <text
-            x="30"
-            y="65"
+            ref={symbolRef}
+            x="0"
+            y="0"
             fontSize="60"
             fill={currentSymbol.color}
-            style={{ transition: `all ${morphDuration}ms` }}
+            fontFamily={fontFamily}
+            textAnchor="middle"
+            alignmentBaseline="central"
+            style={{
+              transition: `all ${morphDuration}ms`,
+              transform: isAnimating ? 'scale(1)' : 'scale(0.33)',
+              opacity: isAnimating ? 1 : 0,
+              animation: `pulse ${showDuration}ms infinite alternate`
+            }}
           >
             {currentSymbol.symbol}
           </text>
-          <text
-            x="10"
-            y="65"
-            fontSize="60"
-            fill={currentSymbol.color}
-            style={{ transition: `all ${morphDuration}ms` }}
-          >
-            {currentSymbol.prefix}
-          </text>
-        </>
-      )}
-
-      {currentStep === 4 && (
-        <path
-          d={symbols[currentStep].symbol === '?' ? "M40 30Q50 20 60 30T50 55V70M50 80V85" : ""}
-          stroke="black"
-          strokeWidth="8"
-          fill="none"
-          style={{
-            transition: `all ${morphDuration}ms`,
-            animation: `pulse ${showDuration * 2}ms infinite alternate`
-          }}
-        />
-      )}
+        )}
+      </g>
 
       <style>
         {`

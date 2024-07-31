@@ -34,6 +34,12 @@ const description =
     <meta property="og:url" content={site} />
     <meta name="twitter:card" content="summary_large_image" />
 
+    <!-- fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&display=swap"
+      rel="stylesheet"
+    />
+
     <!-- initialize theme -->
     <script is:inline>
       const themeSaved = localStorage.getItem("theme");
@@ -42,7 +48,7 @@ const description =
         document.documentElement.dataset.theme = themeSaved;
       } else {
         const prefersDark = window.matchMedia(
-          "(prefers-color-scheme: dark)",
+          "(prefers-color-scheme: dark)"
         ).matches;
         document.documentElement.dataset.theme = prefersDark ? "dark" : "light";
       }
