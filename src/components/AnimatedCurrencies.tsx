@@ -20,7 +20,8 @@ const AnimatedCurrencies: React.FC<AnimatedCurrenciesProps> = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isAnimating, setIsAnimating] = useState(false);
-  const totalSteps = 5;
+  const [isEnlarging, setIsEnlarging] = useState(true);
+  const totalSteps = 8;
 
   const symbolRef = useRef<SVGTextElement>(null);
 
@@ -35,9 +36,13 @@ const AnimatedCurrencies: React.FC<AnimatedCurrenciesProps> = ({
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentStep((prevStep) => (prevStep + 1) % totalSteps);
-      setPosition(getRandomPosition());  // Move this line inside the interval
+      setPosition(getRandomPosition());
       setIsAnimating(true);
-      setTimeout(() => setIsAnimating(false), morphDuration);
+      setIsEnlarging(true);
+      setTimeout(() => {
+        setIsAnimating(false);
+        setIsEnlarging(false);
+      }, morphDuration);
     }, showDuration + morphDuration);
 
     return () => clearInterval(interval);
@@ -45,16 +50,19 @@ const AnimatedCurrencies: React.FC<AnimatedCurrenciesProps> = ({
 
   const symbols = [
     { symbol: '$', color: 'green', prefix: '+' },
+    { symbol: '?', color: 'orange', prefix: '' },
     { symbol: '$', color: 'red', prefix: '-' },
+    { symbol: '?', color: 'orange', prefix: '' },
     { symbol: '€', color: 'green', prefix: '+' },
+    { symbol: '?', color: 'orange', prefix: '' },
     { symbol: '€', color: 'red', prefix: '-' },
-    { symbol: '?', color: 'black', prefix: '' },
+    { symbol: '?', color: 'orange', prefix: '' },
   ];
 
   const currentSymbol = symbols[currentStep];
 
   const getAnimationStyle = () => ({
-    transition: `all ${morphDuration}ms cubic-bezier(0.34, 1.56, 0.64, 1)`,
+    transition: `all ${morphDuration}ms ${isEnlarging ? 'cubic-bezier(0.34, 1.56, 0.64, 1)' : 'cubic-bezier(0.36, 0, 0.66, -0.56)'}`,
     transform: isAnimating ? 'scale(1)' : 'scale(0.33)',
     opacity: isAnimating ? 1 : 0
   });
@@ -66,10 +74,12 @@ const AnimatedCurrencies: React.FC<AnimatedCurrenciesProps> = ({
       : 'none'
   });
 
+  const isQuestionMark = currentSymbol.symbol === '?';
+
   return (
     <svg width={size} height={size} viewBox="-50 -50 100 100">
       <g transform={`translate(${position.x}, ${position.y})`}>
-        {currentStep < 4 ? (
+        {!isQuestionMark ? (
           <>
             <text
               ref={symbolRef}

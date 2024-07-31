@@ -26,7 +26,7 @@
   * more yet-to-be-found ways
 * 
 
-## TODO
+## TODOs
 
 ### Public Static Content
 
@@ -39,7 +39,30 @@
 
 * remove GitHub corner
 * Image of Shopify Bag with a $, an € sign, and a pulsating question mark. SVG?
-* 
+
+### $€? Animation Component
+
+The [link for the font selection](https://fonts.google.com/?preview.text=%2B$%20-$%20%2B%E2%82%AC%20-%20%E2%82%AC%20%3F%3F%3F&query=rubik)
+
+The [Claude 3.5 Sonnet chat](https://claude.ai/chat/8db04dd4-478a-40fe-a2be-3e780ef02d86)
+
+### Image preparation
+
+#### Rotate the Excel Sheet
+
+[Photoshop YT tutorial](https://www.youtube.com/watch?v=8yVo3HGcJ2I)
+
+Or play a bit more with this image magick command [IM docs](https://imagemagick.org/Usage/distorts/#perspective):
+
+```bash
+magick red-green-excel-sheet.png \
+  -alpha set -background none \
+  -virtual-pixel transparent \
+  -distort Perspective \
+  '0,0,250,250  0,1000,150,750  1000,0,1000,0  1000,1000,850,1000' \  
+  -trim +repage \
+  red-green-excel-sheet-rotated-magick.png
+```
 
 ## Hosting
 
