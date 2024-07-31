@@ -1,0 +1,83 @@
+<div id="starfield" class="absolute inset-0">
+  <canvas id="starfield-canvas"></canvas>
+</div>
+
+<script>
+  import invariant from "tiny-invariant";
+
+  const COUNT = 40;
+  const SPEED = 0.1;
+
+  class Parcel {
+    x: number;
+    y: number;
+    z: number;
+    xPrev: number;
+    yPrev: number;
+    image: HTMLImageElement;
+
+    constructor(x = 0, y = 0, z = 0, image: HTMLImageElement) {
+      this.x = x;
+      this.y = y;
+      this.z = z;
+      this.xPrev = x;
+      this.yPrev = y;
+      this.image = image;
+    }
+
+    update(width: number, height: number, speed: number) {
+      this.xPrev = this.x;
+      this.yPrev = this.y;
+      this.z += speed * 0.0675;
+      this.x += this.x * (speed * 0.0225) * this.z;
+      this.y += this.y * (speed * 0.0225) * this.z;
+      if (
+        this.x > width / 2 ||
+        this.x < -width / 2 ||
+        this.y > height / 2 ||
+        this.y < -height / 2
+      ) {
+        this.x = Math.random() * width - width / 2;
+        this.y = Math.random() * height - height / 2;
+        this.xPrev = this.x;
+        this.yPrev = this.y;
+        this.z = 0;
+      }
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+      const size = this.z * 0.5 + 0.5; // Adjust size based on z-position
+      ctx.globalAlpha = this.z * 0.5 + 0.5; // Adjust opacity based on z-position
+      ctx.drawImage(
+        this.image,
+        this.x - size / 2,
+        this.y - size / 2,
+        size,
+        size
+      );
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // In your setup function:
+  const parcelImages = ["parcel1.png", "parcel2.png", "parcel3.png"].map(
+    (src) => {
+      const img = new Image();
+      img.src = src;
+      return img;
+    }
+  );
+
+  const parcels = Array.from(
+    { length: COUNT },
+    () =>
+      new Parcel(
+        0,
+        0,
+        0,
+        parcelImages[Math.floor(Math.random() * parcelImages.length)]
+      )
+  );
+
+  // Update your frame function to use parcels instead of stars
+</script>

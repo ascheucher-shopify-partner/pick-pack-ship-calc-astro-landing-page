@@ -46,6 +46,12 @@ The [link for the font selection](https://fonts.google.com/?preview.text=%2B$%20
 
 The [Claude 3.5 Sonnet chat](https://claude.ai/chat/8db04dd4-478a-40fe-a2be-3e780ef02d86)
 
+### Starfield Animation to Parcelfield Animation
+
+The [Claude 3.5 Sonet [chat](https://claude.ai/chat/8afbe93c-e028-4a71-b7c9-7ece4e3bdfd2) getting inspiration.
+
+
+
 ### Image preparation
 
 #### Rotate the Excel Sheet
