@@ -146,13 +146,49 @@ Add a "register for news/updates email collection" form.
 
 ### How to Deploy to AWS with SST
 
-The [Astro docs](https://docs.astro.build/en/guides/deploy/sst/)
+The [Astro docs](https://docs.astro.build/en/guides/deploy/sst/):
+
+* `pnpm install sst@0.1.75`
+* `pnpm exec sst init`
+* `pnpm install`
+* `pnpm run dev`
+
+To get all SST commands:
+
+```bash
+$ pnpm exec sst
+
+sst: deploy anything
+
+  sst init               Initialize a new project
+  sst dev [command]      Run in development mode
+  sst deploy             Deploy your application
+  sst diff               See what changes will be made
+  sst add <provider>     Add a new provider
+  sst install            Install all the providers
+  sst secret             Manage secrets
+  sst shell [command]    Run a command with linked resources
+  sst remove             Remove your application
+  sst unlock             Clear any locks on the app state
+  sst version            Print the version of the CLI
+  sst upgrade [version]  Upgrade the CLI
+  sst telemetry          Manage telemetry settings
+  sst refresh            Refresh the local app state
+
+Learn more at https://ion.sst.dev
+```
+
+Next Steps:
+
+Create an AWS account for following the guidelines of the /Users/admin/Documents/VSC-Projects/Shopify/Apps/ShippingPickingPackingCalc/shipping-picking-packing-calc-ts-proto/README.md file:
+
+* AWS Account per Environment - Preffered for staging & production
+* AWS Account per Environment and Developer - Preffered for development
+* General Recommendations
 
 ### How to Deploy to AWS S3 - Postboned
 
 The [Astro docs](https://docs.astro.build/en/guides/deploy/aws/)
-
-
 
 ## Template
 
