@@ -139,10 +139,20 @@ install it with `brew install potrace`
 
 ## Hosting
 
-Subdomain: apps.saasquadrat.com/pick-n-pack-n-shipping-calc
+Subdomain: apps.saasquadrat.com/pick-n-pack-n-shipping-calculator
 Host on S3 Bucket
 
-Add a register for updates email collection field.
+Add a "register for news/updates email collection" form.
+
+### How to Deploy to AWS with SST
+
+The [Astro docs](https://docs.astro.build/en/guides/deploy/sst/)
+
+### How to Deploy to AWS S3 - Postboned
+
+The [Astro docs](https://docs.astro.build/en/guides/deploy/aws/)
+
+
 
 ## Template
 
